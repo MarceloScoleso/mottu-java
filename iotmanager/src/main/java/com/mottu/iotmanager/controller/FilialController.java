@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/filiais")
 @RequiredArgsConstructor
 public class FilialController {
+
     private final FilialService filialService;
 
     @PostMapping
@@ -20,13 +21,27 @@ public class FilialController {
     }
 
     @GetMapping
-    public Page<FilialDTO> getAll(Pageable pageable) {
-        return filialService.findAll(pageable);
+    public Page<FilialDTO> getAll(
+            @RequestParam(required = false, defaultValue = "") String nome,
+            @RequestParam(required = false, defaultValue = "") String cidade,
+            Pageable pageable) {
+
+        // Se parâmetros vazios, retorna tudo
+        if (nome.isEmpty() && cidade.isEmpty()) {
+            return filialService.findAll(pageable);
+        }
+        // Busca filtrada por nome ou cidade
+        return filialService.findByNomeOrCidade(nome, cidade, pageable);
     }
 
     @GetMapping("/{id}")
     public FilialDTO getById(@PathVariable Long id) {
         return filialService.findById(id);
+    }
+
+    @PutMapping("/{id}")
+    public FilialDTO update(@PathVariable Long id, @RequestBody @Valid FilialDTO dto) {
+        return filialService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

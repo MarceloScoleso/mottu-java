@@ -9,5 +9,13 @@ import com.mottu.iotmanager.model.Moto;
 
 @Repository
 public interface MotoRepository extends JpaRepository<Moto, Long> {
+    
+    
+    Page<Moto> findByModeloContainingIgnoreCaseAndAno(String modelo, Integer ano, Pageable pageable);
+
+    
     Page<Moto> findByModeloContainingIgnoreCase(String modelo, Pageable pageable);
+    
+    
+    Page<Moto> findByAno(Integer ano, Pageable pageable);
 }

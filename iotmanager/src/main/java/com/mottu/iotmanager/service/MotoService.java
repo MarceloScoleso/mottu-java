@@ -39,8 +39,22 @@ public class MotoService {
 
     @Transactional(readOnly = true)
     @Cacheable("motos")
-    public Page<MotoDTO> findAll(String modelo, Pageable pageable) {
-        Page<Moto> page = motoRepository.findByModeloContainingIgnoreCase(modelo, pageable);
+    public Page<MotoDTO> findAll(String modelo, Integer ano, Pageable pageable) {
+        boolean hasModelo = modelo != null && !modelo.isBlank();
+        boolean hasAno = ano != null;
+
+        Page<Moto> page;
+
+        if (hasModelo && hasAno) {
+            page = motoRepository.findByModeloContainingIgnoreCaseAndAno(modelo, ano, pageable);
+        } else if (hasModelo) {
+            page = motoRepository.findByModeloContainingIgnoreCase(modelo, pageable);
+        } else if (hasAno) {
+            page = motoRepository.findByAno(ano, pageable);
+        } else {
+            page = motoRepository.findAll(pageable);
+        }
+
         return page.map(moto -> modelMapper.map(moto, MotoDTO.class));
     }
 

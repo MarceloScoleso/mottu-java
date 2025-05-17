@@ -24,8 +24,12 @@ public class MotoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MotoDTO>> getAll(@RequestParam(defaultValue = "") String modelo, Pageable pageable) {
-        Page<MotoDTO> page = motoService.findAll(modelo, pageable);
+    public ResponseEntity<Page<MotoDTO>> getAll(
+            @RequestParam(defaultValue = "") String modelo,
+            @RequestParam(required = false) Integer ano,
+            Pageable pageable) {
+
+        Page<MotoDTO> page = motoService.findAll(modelo, ano, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -53,7 +57,7 @@ public class MotoController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
             motoService.delete(id);
-            return ResponseEntity.noContent().build(); 
+            return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
